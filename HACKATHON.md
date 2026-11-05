@@ -14,4 +14,4 @@
 
 ## Actions that only a human performs
 
-Submitting the form, posting on X, making repositories public, pushing, signing transactions, spending tokens and deploying to mainnet. The submission payload is never committed to any repository.
+Submitting the form, posting on X, making repositories public, merging pull requests into `main` (and the first push of `main` to each new repository), signing transactions, spending tokens and deploying to mainnet. The AI agent may push feature branches and open pull requests for review (owner decision, `nearpay-brain/decisions/ADR-0017-git-workflow.md`). The submission payload is never committed to any repository.
