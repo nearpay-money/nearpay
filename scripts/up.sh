@@ -1,11 +1,9 @@
 #!/usr/bin/env bash
-# Start the NearPay stack with Docker Compose (stack lives in nearpay-deploy/compose).
-# Usage: scripts/up.sh [local|server] [--observability]
+# Start the NearPay stack (Docker Compose, defined in nearpay-deploy). Usage: scripts/up.sh [local] [--no-build]
+# Delegates to ../nearpay-deploy/scripts/up.sh, which seeds local test keys, publishes the contract and
+# kit packages to the local registry, and starts the platform plus every service that is built.
 set -euo pipefail
 here="$(cd "$(dirname "$0")/.." && pwd)"
-compose_dir="$(dirname "$here")/nearpay-deploy/compose"
-profile="${1:-local}"; shift || true
-[ -d "$compose_dir" ] || { echo "nearpay-deploy not found next to this repo; run scripts/bootstrap.sh first" >&2; exit 1; }
-files=(-f "$compose_dir/compose.yaml" -f "$compose_dir/compose.$profile.yaml")
-[ "${1:-}" = "--observability" ] && files+=(-f "$compose_dir/compose.observability.yaml")
-exec docker compose "${files[@]}" --env-file "$compose_dir/env/$profile.env" up --build -d
+deploy="$(dirname "$here")/nearpay-deploy"
+[ -x "$deploy/scripts/up.sh" ] || { echo "nearpay-deploy not found next to this repo; run scripts/bootstrap.sh first" >&2; exit 1; }
+exec "$deploy/scripts/up.sh" "$@"

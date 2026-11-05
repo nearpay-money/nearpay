@@ -22,15 +22,15 @@ This repository is the **entry point**: it explains the product, lists every rep
 
 ## Status
 
-Design is complete and stress-tested (see `nearpay-brain`). Implementation proceeds in stages; **Stage 1** delivers the mainnet demo: hosted checkout with any-chain payment, on-chain verification and signed webhooks, plus an AI agent paying an x402-protected API. The run steps below become live at the end of Stage 1; until then `scripts/up.sh` reports that the stack is not built yet.
+Design is complete and stress-tested (see `nearpay-brain`). Implementation proceeds in stages; **Stage 1** delivers the mainnet demo: hosted checkout with any-chain payment, on-chain verification and signed webhooks, plus an AI agent paying an x402-protected API. Step 1.1 (shared contracts, shared libraries, local stack) is done: `scripts/up.sh local` starts the platform and starts each service as soon as its repository is built, listing the ones that are not built yet. Steps 4–6 below become live at the end of Stage 1.
 
 ## Try it (end of Stage 1)
 
-Prerequisites: Docker 24+ with Compose v2, git, Python 3, Node 22 (for the demo scripts).
+Prerequisites: Docker 24+ with Compose 2.30+, git, Python 3, Node 22 with pnpm (`corepack enable`), and [mkcert](https://github.com/FiloSottile/mkcert) for trusted local HTTPS (passkeys need it; without it the stack uses a self-signed certificate).
 
 1. Clone every repo next to this one — run `scripts/bootstrap.sh` → see 26 sibling folders (`nearpay-*`).
-2. Configure — copy `../nearpay-deploy/compose/env/local.env.example` to `local.env` → see test-mode keys; live mode needs your own 1Click API key and NEAR accounts (never committed).
-3. Start — run `scripts/up.sh local` → see `https://api.nearpay.localhost/healthz` return `ok` and the dashboard at `https://dashboard.nearpay.localhost`.
+2. Start — run `scripts/up.sh local` → see "NearPay is up" with the local URLs; `curl https://api.nearpay.localhost/healthz` returns `OK` and the dashboard is at `https://dashboard.nearpay.localhost`. The first run creates test-mode keys in `../nearpay-deploy/.secrets/` and `../nearpay-deploy/compose/env/local.env` (never committed).
+3. Configure (optional) — edit `../nearpay-deploy/compose/env/local.env` → hostnames, ports and chain endpoints; live mode needs your own 1Click API key and NEAR accounts. Stop with `scripts/down.sh`.
 4. Pay in test mode — run `npm --prefix ../nearpay-testbed run demo:checkout` → see a checkout URL; open it, pay with the sandbox rail, see `payment_intent.succeeded` arrive at the demo merchant.
 5. Agent payment — run `npm --prefix ../nearpay-testbed run demo:agent` → see an agent receive HTTP 402, sign a NEAR Intents transfer, and get the resource with a `PAYMENT-RESPONSE` header.
 6. Live mode on mainnet — follow `../nearpay-testbed/README.md#mainnet-demo` (small amounts; you sign every transaction yourself).

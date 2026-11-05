@@ -20,7 +20,7 @@
       "group": "Contracts & shared",
       "kind": "library",
       "ref": "main",
-      "purpose": "Small, versioned TypeScript runtime libraries shared by services: integer money, IDs, service bootstrap (Fastify + OpenTelemetry), Postgres helpers (outbox, inbox, idempotency), internal auth, NEAR Intents payload build/sign/verify, chain address validation, test utilities"
+      "purpose": "Small, versioned TypeScript runtime libraries shared by services: integer money, IDs, service bootstrap (Fastify + OpenTelemetry), Postgres helpers (outbox, inbox, idempotency), NATS JetStream bus, internal auth, resilient HTTP, NEAR Intents payload build/sign/verify, chain address validation, test utilities"
     },
     {
       "name": "nearpay-identity",
