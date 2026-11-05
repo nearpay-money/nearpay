@@ -1,0 +1,187 @@
+{
+  "base_default": "https://github.com/nearpay-money",
+  "repos": [
+    {
+      "name": "nearpay-brain",
+      "group": "Knowledge",
+      "kind": "docs",
+      "ref": "main",
+      "purpose": "Architecture, decisions, LLDs, development plan"
+    },
+    {
+      "name": "nearpay-spec",
+      "group": "Contracts & shared",
+      "kind": "spec",
+      "ref": "main",
+      "purpose": "Single source of truth for every contract: public REST (OpenAPI 3.1), internal service APIs, domain events (AsyncAPI), webhook payloads, error catalogue, NearPay x402 scheme"
+    },
+    {
+      "name": "nearpay-kit",
+      "group": "Contracts & shared",
+      "kind": "library",
+      "ref": "main",
+      "purpose": "Small, versioned TypeScript runtime libraries shared by services: integer money, IDs, service bootstrap (Fastify + OpenTelemetry), Postgres helpers (outbox, inbox, idempotency), internal auth, NEAR Intents payload build/sign/verify, chain address validation, test utilities"
+    },
+    {
+      "name": "nearpay-identity",
+      "group": "Services",
+      "kind": "service",
+      "ref": "main",
+      "purpose": "Accounts, users, roles, passkey sessions, API keys, settlement destinations with attestation and cool-off, gateway authorisation"
+    },
+    {
+      "name": "nearpay-payments",
+      "group": "Services",
+      "kind": "service",
+      "ref": "main",
+      "purpose": "Payment lifecycle: checkout sessions, payment intents, attempts, refunds, payment links, customers, statement ledger, reconciliation"
+    },
+    {
+      "name": "nearpay-billing",
+      "group": "Services",
+      "kind": "service",
+      "ref": "main",
+      "purpose": "Products, prices, manual tax rates, invoices, subscriptions, dunning, and the vault keeper for auto-debit mandates"
+    },
+    {
+      "name": "nearpay-rails",
+      "group": "Services",
+      "kind": "service",
+      "ref": "main",
+      "purpose": "Value movement: route providers (1Click, sandbox, direct-intents), token registry, pricing/FX, executions, tracking (hot poller, Explorer feed, NEAR indexer, destination watchers with amount tags), Tier-A chain verifiers"
+    },
+    {
+      "name": "nearpay-agentpay",
+      "group": "Services",
+      "kind": "service",
+      "ref": "main",
+      "purpose": "x402 v2 facilitator (exact: intents-transfer, near-intents), MPP adapter, batching relayer for signed NEAR Intents with a function-call key pool"
+    },
+    {
+      "name": "nearpay-compliance",
+      "group": "Services",
+      "kind": "service",
+      "ref": "main",
+      "purpose": "Address screening, KYB cases, geo policy, compliance cases and blocklists; policies are data per jurisdiction"
+    },
+    {
+      "name": "nearpay-webhooks",
+      "group": "Services",
+      "kind": "service",
+      "ref": "main",
+      "purpose": "Public event log, webhook endpoints, signed delivery with retries, replay and delivery logs"
+    },
+    {
+      "name": "nearpay-notify",
+      "group": "Services",
+      "kind": "service",
+      "ref": "main",
+      "purpose": "Transactional email (receipts, invoices, dunning, security alerts) with primary/fallback providers"
+    },
+    {
+      "name": "nearpay-sandbox",
+      "group": "Services",
+      "kind": "service",
+      "ref": "main",
+      "purpose": "Deterministic simulator of the route provider and chains for test mode, local development and E2E (NEAR Intents has no testnet)"
+    },
+    {
+      "name": "nearpay-sentinel",
+      "group": "Services",
+      "kind": "service",
+      "ref": "main",
+      "purpose": "Independent second party with its own code, credentials and deploy pipeline: co-signs every deposit instruction shown by checkout after re-reading the quote from 1Click and matching it to an active destination in identity's registry; independently re-reconciles succeeded payments against chain evidence; owns the global quoting kill switch"
+    },
+    {
+      "name": "nearpay-checkout",
+      "group": "Frontends",
+      "kind": "static SPA",
+      "ref": "main",
+      "purpose": "Hosted checkout, payment links, hosted invoices and the embedded iframe app; wallet adapters; deposit instructions; live status"
+    },
+    {
+      "name": "nearpay-js",
+      "group": "Frontends",
+      "kind": "library + static",
+      "ref": "main",
+      "purpose": "Widget loader and client SDKs that mount the checkout iframe and speak a versioned postMessage protocol"
+    },
+    {
+      "name": "nearpay-dashboard",
+      "group": "Frontends",
+      "kind": "static SPA",
+      "ref": "main",
+      "purpose": "Merchant dashboard: payments, refunds (with wallet signing), invoices, subscriptions, customers, developers (keys, webhooks, events, logs), settlement, team"
+    },
+    {
+      "name": "nearpay-console",
+      "group": "Frontends",
+      "kind": "static SPA (internal)",
+      "ref": "main",
+      "purpose": "Internal operations: merchant review, KYB, compliance cases, screening hits, execution explorer, verification holds, audit log"
+    },
+    {
+      "name": "nearpay-docs",
+      "group": "Frontends",
+      "kind": "static site",
+      "ref": "main",
+      "purpose": "Public developer documentation: guides, API reference generated from nearpay-spec, webhooks, test mode, agents, error pages"
+    },
+    {
+      "name": "nearpay-web",
+      "group": "Frontends",
+      "kind": "static site",
+      "ref": "main",
+      "purpose": "Marketing site, pricing, legal pages"
+    },
+    {
+      "name": "nearpay-node",
+      "group": "SDKs & tools",
+      "kind": "library",
+      "ref": "main",
+      "purpose": "Server SDK for Node/TypeScript: typed resources, automatic idempotency keys and retries, webhook signature verification, refund signing helpers"
+    },
+    {
+      "name": "nearpay-agentkit",
+      "group": "SDKs & tools",
+      "kind": "library",
+      "ref": "main",
+      "purpose": "Agent payments toolkit: x402 server middleware (Express/Hono/Next) and client, MCP server for agents, NEAR Intents signing helpers"
+    },
+    {
+      "name": "nearpay-cli",
+      "group": "SDKs & tools",
+      "kind": "binary",
+      "ref": "main",
+      "purpose": "Developer CLI: login, listen (forward webhooks to localhost), trigger test events, tail logs, resend events"
+    },
+    {
+      "name": "nearpay-contracts",
+      "group": "On-chain",
+      "kind": "Rust / NEAR",
+      "ref": "main",
+      "purpose": "NEAR smart contracts"
+    },
+    {
+      "name": "nearpay-infra",
+      "group": "Platform",
+      "kind": "IaC",
+      "ref": "main",
+      "purpose": "Host provisioning and hardening (Ansible), WireGuard mesh, k3s install, Cloudflare/GitHub/object-storage (Terraform), cluster bootstrap (Argo CD, OpenBao)"
+    },
+    {
+      "name": "nearpay-deploy",
+      "group": "Platform",
+      "kind": "GitOps",
+      "ref": "main",
+      "purpose": "Desired runtime state"
+    },
+    {
+      "name": "nearpay-testbed",
+      "group": "Platform",
+      "kind": "tests",
+      "ref": "main",
+      "purpose": "Whole-system verification: local compose stack, cross-service E2E, consumer-driven contract tests, load tests (k6), chaos scenarios, mainnet canary runner, recorded provider fixtures"
+    }
+  ]
+}
