@@ -28,7 +28,7 @@ Design is complete and stress-tested (see `nearpay-brain`). Implementation proce
 
 Prerequisites: Docker 24+ with Compose 2.30+, git, Python 3, Node 22 with pnpm (`corepack enable`), and [mkcert](https://github.com/FiloSottile/mkcert) for trusted local HTTPS (passkeys need it; without it the stack uses a self-signed certificate).
 
-1. Clone every repo next to this one — run `scripts/bootstrap.sh` → see 26 sibling folders (`nearpay-*`).
+1. Clone every repo next to this one — run `scripts/bootstrap.sh` → see 25 sibling folders (`nearpay-*`).
 2. Start — run `scripts/up.sh local` → see "NearPay is up" with the local URLs; `curl https://api.nearpay.localhost/healthz` returns `OK` and the dashboard is at `https://dashboard.nearpay.localhost`. The first run creates test-mode keys in `../nearpay-deploy/.secrets/` and `../nearpay-deploy/compose/env/local.env` (never committed).
 3. Configure (optional) — edit `../nearpay-deploy/compose/env/local.env` → hostnames, ports and chain endpoints; live mode needs your own 1Click API key and NEAR accounts. Stop with `scripts/down.sh`.
 4. Pay in test mode — run `npm --prefix ../nearpay-testbed run demo:checkout` → see a checkout URL; open it, pay with the sandbox rail, see `payment_intent.succeeded` arrive at the demo merchant.
@@ -44,7 +44,7 @@ Prerequisites: Docker 24+ with Compose 2.30+, git, Python 3, Node 22 with pnpm (
 | Knowledge | `nearpay-brain` |
 | Contracts & shared | `nearpay-spec`, `nearpay-kit` |
 | Services | `nearpay-identity`, `nearpay-payments`, `nearpay-billing`, `nearpay-rails`, `nearpay-agentpay`, `nearpay-compliance`, `nearpay-webhooks`, `nearpay-notify`, `nearpay-sandbox`, `nearpay-sentinel` |
-| Frontends | `nearpay-checkout`, `nearpay-js`, `nearpay-dashboard`, `nearpay-console`, `nearpay-docs`, `nearpay-web` |
+| Frontends | `nearpay-checkout`, `nearpay-js`, `nearpay-dashboard`, `nearpay-console`, `nearpay-site` |
 | SDKs & tools | `nearpay-node`, `nearpay-agentkit`, `nearpay-cli` |
 | On-chain | `nearpay-contracts` |
 | Platform | `nearpay-infra`, `nearpay-deploy`, `nearpay-testbed` |
