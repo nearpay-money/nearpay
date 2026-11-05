@@ -121,18 +121,11 @@
       "purpose": "Internal operations: merchant review, KYB, compliance cases, screening hits, execution explorer, verification holds, audit log"
     },
     {
-      "name": "nearpay-docs",
+      "name": "nearpay-site",
       "group": "Frontends",
       "kind": "static site",
       "ref": "main",
-      "purpose": "Public developer documentation: guides, API reference generated from nearpay-spec, webhooks, test mode, agents, error pages"
-    },
-    {
-      "name": "nearpay-web",
-      "group": "Frontends",
-      "kind": "static site",
-      "ref": "main",
-      "purpose": "Marketing site, pricing, legal pages"
+      "purpose": "Public static sites from one Astro project: developer documentation (guides, API reference generated from nearpay-spec, webhooks, test mode, agents, error pages) and the marketing site (product, pricing, legal pages)"
     },
     {
       "name": "nearpay-node",
