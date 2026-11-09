@@ -13,7 +13,7 @@
       "group": "Contracts & shared",
       "kind": "spec",
       "ref": "main",
-      "purpose": "Single source of truth for every contract: public REST (OpenAPI 3.1), internal service APIs, domain events (AsyncAPI), webhook payloads, error catalogue, NearPay x402 scheme"
+      "purpose": "Single source of truth for every contract, authored as zod schemas in TypeScript and emitted as OpenAPI 3.1 / AsyncAPI / JSON Schema: public REST, internal service APIs, domain events, webhook payloads, error catalogue, NearPay x402 scheme, shared test vectors"
     },
     {
       "name": "nearpay-kit",
@@ -125,7 +125,7 @@
       "group": "Frontends",
       "kind": "static site",
       "ref": "main",
-      "purpose": "Public static sites from one Astro project: developer documentation (guides, API reference generated from nearpay-spec, webhooks, test mode, agents, error pages) and the marketing site (product, pricing, legal pages)"
+      "purpose": "Public static sites from one Astro project: developer documentation at `docs.` (guides, API reference generated from nearpay-spec, webhooks, test mode, agents, error pages) and the marketing site at the apex domain (product, pricing, legal pages)"
     },
     {
       "name": "nearpay-node",
@@ -174,7 +174,7 @@
       "group": "Platform",
       "kind": "tests",
       "ref": "main",
-      "purpose": "Whole-system verification: local compose stack, cross-service E2E, consumer-driven contract tests, load tests (k6), chaos scenarios, mainnet canary runner, recorded provider fixtures"
+      "purpose": "Whole-system verification and demos: merchant-demo app, demo scripts (checkout, agent), Stage 1 ops CLI, cross-service E2E, consumer-driven contract tests, load tests (k6), chaos scenarios, mainnet canary runner, recorded provider fixtures"
     }
   ]
 }
