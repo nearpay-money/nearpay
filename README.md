@@ -36,7 +36,7 @@ Prerequisites: Docker 24+ with Compose 2.30+, git, Python 3, Node 22 with pnpm (
 
    ```sh
    cd ../nearpay-testbed
-   pnpm run setup                                                   # @nearpay/* from the stack's local registry
+   pnpm run setup                                                   # @nearpay-money/* from the stack's local registry
    export NODE_EXTRA_CA_CERTS=../nearpay-deploy/.secrets/tls/ca.pem # Node trusts the local CA
    ```
 
@@ -57,7 +57,7 @@ Prerequisites: Docker 24+ with Compose 2.30+, git, Python 3, Node 22 with pnpm (
    ```
 
    → `login` prints `Done! Logged in to … in test mode.`; `listen` prints `--> payment_intent.succeeded [evt_…] pi_…`; `trigger` prints each API call, then `✓ payment_intent.succeeded evt_…`. Without a dashboard user, pass the demo `sk_test_` key from `../nearpay-deploy/.secrets/demo.json` with `--api-key`. Verified by `e2e/stage3/cli.pw.ts`.
-10. MCP agent pays an invoice — run `pnpm test:e2e e2e/stage3/agents` → `@nearpay/mcp` over stdio pays a checkout session and a hosted invoice, refuses over-budget and non-allow-listed payments, and pays a cross-chain x402 resource; reconciliation stays `ok`. To drive it yourself: `../nearpay-agentkit/examples/mcp-agent/agent.ts` (environment in its header).
+10. MCP agent pays an invoice — run `pnpm test:e2e e2e/stage3/agents` → `@nearpay-money/mcp` over stdio pays a checkout session and a hosted invoice, refuses over-budget and non-allow-listed payments, and pays a cross-chain x402 resource; reconciliation stays `ok`. To drive it yourself: `../nearpay-agentkit/examples/mcp-agent/agent.ts` (environment in its header).
 11. Auto-debit mandate (simulated vault) — in the dashboard, **Billing** → **Subscriptions** → create one with a monthly price in USD or USDC and collection method auto-debit → the auto-debit panel shows the funding details; fund it with the test-mode simulated funding → **Billing** → **Auto-debit** → the mandate shows its balance, periods left and collections with NEAR evidence; the test-mode payer helpers cancel and withdraw. Run `pnpm test:e2e e2e/stage4/mandates` → fund 3 periods → `mandate.activated` → keeper collects period 1 → invoice paid by `mandate_collection` → renewal collected → withdraw while active refused → payer cancel refunds the rest (`mandate.canceled`); insufficient funds fall back to the hosted invoice. Edge cases: `e2e/stage4/vault-scenarios`.
 12. Solana payer — on a hosted checkout or invoice page choose Solana (USDC or SOL) → see a sentinel-attested deposit address, no memo, a Solana Pay QR; simulate → paid. Verified by `e2e/stage4/chains` (also a Bitcoin P2WPKH payer).
 13. Everything — run `pnpm test:e2e` and `NP_E2E=1 pnpm test:pw` → every suite above.
@@ -79,6 +79,8 @@ Live mode runs the same local stack with your own accounts and credentials; you 
 | SDKs & tools | `nearpay-node`, `nearpay-agentkit`, `nearpay-cli` |
 | On-chain | `nearpay-contracts` |
 | Platform | `nearpay-infra`, `nearpay-deploy`, `nearpay-testbed` |
+
+Public npm packages (`@nearpay-money/spec`, `/node`, `/js`, `/react`, `/cli`, `/x402`, `/agent-signer`, `/mcp`) are released by tag from their repositories: `RELEASING.md`.
 
 ## Built with
 
