@@ -27,7 +27,7 @@
       "group": "Services",
       "kind": "service",
       "ref": "main",
-      "purpose": "Accounts, users, roles, passkey sessions, API keys, settlement destinations with attestation and cool-off, gateway authorisation"
+      "purpose": "Accounts, users, roles, passkey sessions, API keys, settlement destinations with attestation (active immediately; optional operator cool-off), gateway authorisation"
     },
     {
       "name": "nearpay-payments",
