@@ -48,14 +48,14 @@
       "group": "Services",
       "kind": "service",
       "ref": "main",
-      "purpose": "Value movement: route providers (1Click, sandbox, direct-intents), token registry, pricing/FX, executions, tracking (hot poller, Explorer feed, NEAR indexer, destination watchers with amount tags), Tier-A chain verifiers"
+      "purpose": "Value movement: route providers (1Click live, sandbox in test mode), token registry, pricing/FX, executions, tracking (hot poller, Explorer feed, NEAR indexer, destination watchers with amount tags), Tier-A chain verifiers"
     },
     {
       "name": "nearpay-agentpay",
       "group": "Services",
       "kind": "service",
       "ref": "main",
-      "purpose": "x402 v2 facilitator (exact: intents-transfer, near-intents), MPP adapter, batching relayer for signed NEAR Intents with a function-call key pool"
+      "purpose": "x402 v2 facilitator (exact: intents-transfer, near-intents) and a batching relayer for signed NEAR Intents with a function-call key pool"
     },
     {
       "name": "nearpay-compliance",
@@ -76,7 +76,7 @@
       "group": "Services",
       "kind": "service",
       "ref": "main",
-      "purpose": "Transactional email (receipts, invoices, dunning, security alerts) with primary/fallback providers"
+      "purpose": "Transactional email (sign-in links, receipts, invoices, reminders, security alerts) through one SMTP provider"
     },
     {
       "name": "nearpay-sandbox",
@@ -118,7 +118,7 @@
       "group": "Frontends",
       "kind": "static SPA (internal)",
       "ref": "main",
-      "purpose": "Internal operations: merchant review, KYB, compliance cases, screening hits, execution explorer, verification holds, audit log"
+      "purpose": "Internal operations: merchants, business details, compliance cases, screening hits, execution explorer, verification holds, kill switch, reconciliation, audit log"
     },
     {
       "name": "nearpay-site",
@@ -153,28 +153,28 @@
       "group": "On-chain",
       "kind": "Rust / NEAR",
       "ref": "main",
-      "purpose": "NEAR smart contracts"
+      "purpose": "NEAR smart contracts: the subscription vault for auto-debit (built and tested; not deployed on mainnet)"
     },
     {
       "name": "nearpay-infra",
       "group": "Platform",
       "kind": "IaC",
       "ref": "main",
-      "purpose": "Host provisioning and hardening (Ansible), WireGuard mesh, k3s install, Cloudflare/GitHub/object-storage (Terraform), cluster bootstrap (Argo CD, OpenBao)"
+      "purpose": "Planned host provisioning and cluster bootstrap as code (Ansible, Terraform, k3s, Argo CD); a scaffold with no code yet"
     },
     {
       "name": "nearpay-deploy",
       "group": "Platform",
       "kind": "GitOps",
       "ref": "main",
-      "purpose": "Desired runtime state"
+      "purpose": "How NearPay runs: the Docker Compose stack, scripts for the local stack and the live beta, monitoring, and the local package registry"
     },
     {
       "name": "nearpay-testbed",
       "group": "Platform",
       "kind": "tests",
       "ref": "main",
-      "purpose": "Whole-system verification and demos: merchant-demo app, demo scripts (checkout, agent), Stage 1 ops CLI, cross-service E2E, consumer-driven contract tests, load tests (k6), chaos scenarios, mainnet canary runner, recorded provider fixtures"
+      "purpose": "Whole-system verification and demos: merchant-demo app, demo scripts (checkout, agent), ops CLI wrapper, cross-service end-to-end suites"
     }
   ]
 }
