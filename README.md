@@ -106,6 +106,16 @@ sequenceDiagram
 
 The money goes from the customer's wallet, through NEAR Intents, to the merchant's wallet. No NearPay account is on that path. NearPay's fee is taken by NEAR Intents as the payment settles (`appFees`), so NearPay never needs to hold a balance.
 
+## What it looks like
+
+These are screenshots of the test-mode walkthrough in [Path E](#path-e-run-the-whole-platform-locally), taken on 2026-11-13 from the code on `main`. The live checkout at `pay.nearpay.money` is the same page without the test banner.
+
+| Hosted checkout: the customer sends any token to a deposit address the independent checker has verified | Paid |
+|---|---|
+| <img src="docs/img/checkout-test-mode.png" alt="NearPay hosted checkout in test mode: order summary on the left; on the right the amount to send, the deposit address with a QR code, and a Simulate payment button" width="420"> | <img src="docs/img/checkout-paid.png" alt="NearPay hosted checkout after payment: Payment complete, Paid, 2.00859 USDC paid on Base" width="420"> |
+
+<img src="docs/img/dashboard-home.png" alt="NearPay merchant dashboard in test mode: setup steps (account, payout wallet, business details, test payment) and the navigation: Payments, Payment links, Subscriptions, Customers, Agent payments, Payout wallets, Invoices, Developers" width="860">
+
 ## How NEAR is used
 
 | NEAR component | What NearPay uses it for | Where in the code |

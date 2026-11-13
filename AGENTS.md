@@ -2,7 +2,7 @@
 
 This repo is the entry point and hackathon submission URL. Keep it thin.
 
-- Allowed content: README, HACKATHON.md, AGENTS.md, CLAUDE.md (a pointer to AGENTS.md), repos.json, scripts that clone repos, start the Compose stack or verify the live deployment (read-only, public URLs only), LICENSE.
+- Allowed content: README, HACKATHON.md, AGENTS.md, CLAUDE.md (a pointer to AGENTS.md), repos.json, scripts that clone repos, start the Compose stack or verify the live deployment (read-only, public URLs only), screenshots of the product in `docs/img/`, LICENSE.
 - No product source code, no submodules, no copies of docs (link to `nearpay-brain`).
 - `repos.json` must match `nearpay-brain/architecture/repositories.md`; regenerate both from the same definition.
 - README rules (hackathon): works for a machine reader and a human, "do X → see Y" steps, no marketing; every command in it must work at the stated stage.
