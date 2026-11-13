@@ -162,7 +162,7 @@ Sign-up is open. There is no review step: you can receive a real payment a few m
 
 1. Open <https://dashboard.nearpay.money/signup>, enter an email address, open the link NearPay emails you and create a passkey on your device → see the dashboard.
 2. Set the **Live / Test** switch (top right) to **Test** → see the strip "Test mode. No real funds move; payments use the sandbox."
-3. **Payout wallets → Add payout wallet**: pick a token and a network, enter any address of that network and confirm with your passkey → see it listed as active. A test payout wallet needs no wallet signature.
+3. **Payout wallets → Add payout wallet**: pick a token and a network (for example USDC on Base), choose **Address on Base**, enter an address of your own on that network and confirm with your passkey → see it listed as active. A test payout wallet needs no wallet signature. Use your own address, not a well-known one: in test mode two accounts with the same address block each other's checkouts (see known limits).
 4. **Payment links → Create payment link**: give it a name and a price of $5, then **Create link** → see the link, `https://pay.nearpay.money/l/…`.
 5. Open the link and press **Continue to payment** → see the checkout with the banner "Test mode — no real funds". Pick a network and a token → see "Try a payment" with a **Simulate payment** button.
 6. Press **Simulate payment** → see "Paid" a few seconds later. Back in the dashboard, **Payments** lists the payment as paid.
@@ -170,7 +170,7 @@ Sign-up is open. There is no review step: you can receive a real payment a few m
 **Live mode (your own wallet receives real money):**
 
 1. Switch to **Live**. In **Business details**, fill in and save your details. Nobody reviews them; they count as soon as they are saved.
-2. **Payout wallets → Add payout wallet**: choose what you want to receive (for example USDC on Base) and your address, confirm with your passkey, then sign the ownership message with that wallet. Signing moves no funds → see the wallet active at once, and the dashboard says "Live payments are active".
+2. **Payout wallets → Add payout wallet**: choose what you want to receive (for example USDC on Base), choose **Address on Base** and enter your address, confirm with your passkey, then sign the ownership message with that wallet. Signing moves no funds → see the wallet active at once, and the dashboard says "Live payments are active".
 3. **Payment links → Create payment link**: price $1 → open the link and pay from any other wallet, with any token on any chain → see "Paid" in the checkout, the payment in **Payments** with its on-chain transactions, and the money in your wallet.
 
 **As a developer:** create a key in **Developers → API keys**, then:
@@ -213,10 +213,12 @@ pnpm test
 
 ## Path E: run the whole platform locally
 
-Prerequisites: Docker 24+ with Compose 2.30+ and about 10 GB of memory, git, Python 3, Node 22 with pnpm (`corepack enable`), Google Chrome for the browser suites. [mkcert](https://github.com/FiloSottile/mkcert) is optional; it gives trusted local HTTPS, which passkeys need. Test mode needs no funds and no keys of yours: a sandbox service simulates NEAR Intents, the paying chains and the vault contract.
+Prerequisites: Docker 24+ with Compose 2.30+, 8 GB of memory and about 10 GB of free disk for Docker, git, Python 3, Node 22 with pnpm (`corepack enable`), and Google Chrome for the browser suites (or set `NP_CHROME` to a Chromium binary). The first start pulls base images from Docker Hub and gcr.io and compiles one small Go program, so it needs those hosts and the Go module proxy. [mkcert](https://github.com/FiloSottile/mkcert) is needed only to use the dashboard by hand (step 7): passkeys need HTTPS the browser trusts. Every other step and all suites work without it. Test mode needs no funds and no keys of yours: a sandbox service simulates NEAR Intents, the paying chains and the vault contract.
+
+Last full run: 2026-11-13, from fresh clones of every repository's `main`, on Linux with 2 CPUs and 8 GB of memory. `pnpm test:e2e`: 18 files, 43 tests passed, 4 skipped by design (three slow scenarios behind `NP_E2E_SLOW=1`, one test for manual business review). `NP_E2E=1 pnpm test:pw`: 4 passed. Building the 12 service images and 3 web apps took about 5 minutes; the containers used under 3 GB of memory.
 
 1. Clone every repository next to this one: `scripts/bootstrap.sh` → see 25 sibling folders (`nearpay-*`).
-2. Start the stack: `scripts/up.sh local` → see "NearPay is up" with the local URLs. `curl -k https://api.nearpay.localhost/healthz` prints `ok`. The first run builds every service and takes a while. It creates test keys in `../nearpay-deploy/.secrets/` (never committed). Stop with `scripts/down.sh`.
+2. Start the stack: `scripts/up.sh local` → see "NearPay is up" with the local URLs. `curl -k https://api.nearpay.localhost/healthz` prints `OK`. The first run builds every service and takes a while. It creates test keys in `../nearpay-deploy/.secrets/` (never committed). Stop with `scripts/down.sh`.
 3. Seed demo data: `../nearpay-deploy/scripts/seed.sh data` → see "demo merchant ready (test mode)".
 4. Prepare the test bench. Every command below runs in `../nearpay-testbed`:
 
@@ -232,13 +234,28 @@ Then walk through the features. "Verified by" names the end-to-end suite that ch
 |---|---|---|---|
 | 5 | `pnpm demo:checkout` | A checkout URL; a scripted customer checks sentinel's signature and simulates the deposit; then `payment_intent.succeeded` arrives at the demo merchant with a valid signature | `e2e/api/checkout`, `e2e/checkout/hosted.pw.ts` |
 | 6 | `pnpm demo:agent` | An AI agent calls a paid API: `402`, a signed NEAR Intents transfer, `200` with a `PAYMENT-RESPONSE` header, then `agent_payment.settled` | `e2e/agent/x402`, `e2e/stage3/agents` |
-| 7 | In the dashboard (`https://dashboard.nearpay.localhost`; sign up, magic link in Mailpit at `https://mail.nearpay.localhost`, keep **Test** on): create a payment link, open it, pay, then refund the payment | The link's use count goes up; the payment appears; `refund.succeeded` and a receipt email in Mailpit | `e2e/stage2` |
+| 7 | In the dashboard (`https://dashboard.nearpay.localhost`; sign up, magic link in Mailpit at `https://mail.nearpay.localhost`, keep **Test** on): add a test payout wallet (**Payout wallets → Add payout wallet**: USDC, Base, **Address on Base**, a Base address of your own). Create a payment link, open it and pay with **Simulate payment**. Then open the payment and refund it (**Refund payment → Simulate signed transfer**) | The link's use count goes up; the payment is listed as paid; the refund shows "Refunded" (reload the page if it still says "Not submitted") | `e2e/stage2` (also checks `refund.succeeded` and the receipt email) |
 | 8 | `pnpm test:e2e e2e/stage3/invoices e2e/stage3/subscriptions` | An invoice is finalised, emailed, paid from Base or Solana and its PDF stamped PAID; a subscription renews, goes past due when unpaid and recovers | the same suites |
-| 9 | CLI: `pnpm -C ../nearpay-cli install && pnpm -C ../nearpay-cli build`, then `node ../nearpay-cli/dist/cli.js listen` in one terminal and `node ../nearpay-cli/dist/cli.js trigger payment_intent.succeeded` in another (set `NEARPAY_API_BASE=https://api.nearpay.localhost` and pass `--api-key` with the `sk_test_` key from `../nearpay-deploy/.secrets/demo.json`) | `listen` prints `--> payment_intent.succeeded [evt_…]` | `e2e/stage3/cli.pw.ts` |
+| 9 | CLI: the commands in [the block below](#step-9-the-cli) | `listen` prints `--> payment_intent.succeeded [evt_…] pi_…`; `trigger` prints `✓ payment_intent.succeeded evt_…` | `e2e/stage3/cli.pw.ts` |
 | 10 | `pnpm test:e2e e2e/stage3/agents` | The MCP server (`@nearpay-money/mcp`) pays a checkout session and an invoice for an AI agent, and refuses payments over its budget or outside its allow-list | the same suite |
 | 11 | `pnpm test:e2e e2e/stage4/mandates` | Auto-debit against the simulated vault: fund three periods, the keeper collects, the customer cancels and gets the rest back | the same suite, `e2e/stage4/vault-scenarios` |
 | 12 | `pnpm test:e2e e2e/stage4/chains` | A Solana customer and a Bitcoin customer pay; each gets a sentinel-attested deposit address | the same suite |
 | 13 | `pnpm test:e2e` and `NP_E2E=1 pnpm test:pw` | Every suite above | |
+
+### Step 9: the CLI
+
+Run these in `../nearpay-testbed`, the `listen` line in one terminal and the `trigger` line in another (repeat the exports there):
+
+```sh
+pnpm -C ../nearpay-cli install && pnpm -C ../nearpay-cli build
+export NEARPAY_API_BASE=https://api.nearpay.localhost
+export NEARPAY_KEY="$(node -p "require('../nearpay-deploy/.secrets/demo.json').secret_key")"
+# Linux only, when `getent hosts api.nearpay.localhost` prints nothing (containers, WSL): let Node resolve *.localhost
+export NODE_OPTIONS="--import $PWD/lib/localhost-dns-preload.mjs"
+
+node ../nearpay-cli/dist/cli.js listen --api-key "$NEARPAY_KEY"                              # terminal 1
+node ../nearpay-cli/dist/cli.js trigger payment_intent.succeeded --api-key "$NEARPAY_KEY"    # terminal 2
+```
 
 ## What is built
 
@@ -264,6 +281,7 @@ Known limits:
 - The auto-debit vault contract is not deployed on mainnet, so live subscriptions are billed by invoice. Deploying the contract is a human step that has not been taken.
 - The fees shown on the site are indicative and may change.
 - Live checkout is protected by a bot check (Cloudflare Turnstile), so a live payment cannot be driven by `curl` alone. Path A covers what can be checked without a browser; test mode (Paths C and E) has a scripted customer.
+- In test mode a payout wallet needs no signature, so two test accounts can register the same address. Checkouts for that address are then refused ("We couldn't verify this checkout") because the independent checker cannot tell which account the address belongs to. Live mode is not affected: a live wallet must be signed for and can belong to one account only.
 - A few tokens that NEAR Intents lists under its newest naming scheme (`1cs_v1:`) cannot be paid with yet. They are hidden from checkout.
 
 ## Repositories

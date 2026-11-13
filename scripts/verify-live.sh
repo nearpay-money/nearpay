@@ -66,7 +66,7 @@ echo
 check site "marketing site is up" "$SITE/" 200 'Accept crypto payments'
 check docs "docs: first live payment guide" "$DOCS/get-started" 200 'Accept your first live payment'
 check docs-ai "docs: copy-paste prompt for coding agents" "$DOCS/build-with-ai" 200 'Integrate NearPay'
-check api-health "API answers" "$API/healthz" 200 '^ok'
+check api-health "API answers" "$API/healthz" 200 '^(ok|OK)'
 check api-errors "API errors follow the documented envelope" "$API/v1/payment_intents" 401 '"code":"authentication_required".*"doc_url":"https://docs\.'
 check checkout "hosted checkout is served" "$PAY/" 200 'NearPay Checkout'
 check dashboard "merchant dashboard is served" "$DASH/signup" 200 '<div id="root"|<title>'
