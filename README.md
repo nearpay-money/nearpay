@@ -133,13 +133,13 @@ git clone https://github.com/nearpay-money/nearpay && cd nearpay
 scripts/verify-live.sh
 ```
 
-→ See one `PASS` line per claim, then a JSON summary ending in `"ok":true`. The script only reads public URLs. It checks:
+→ See one `PASS` line per claim, then a JSON summary ending in `"ok":true`. The script only reads public URLs. Last run by the team: 2026-11-13 08:09 UTC, with `--sdk`: 22 passed, 0 failed (`{"suite":"nearpay-verify-live","domain":"nearpay.money","pass":22,"fail":0,"skip":0,"ok":true}`). It checks:
 
 | Line | Claim it verifies |
 |---|---|
 | `site`, `docs`, `docs-ai`, `checkout`, `dashboard`, `js-loader` | The website, docs, hosted checkout, dashboard and browser loader are served |
 | `api-health`, `api-errors` | The API answers, and errors follow the documented format with a link to the docs |
-| `assets` | The API lists the tokens and chains a customer can pay with (the script prints the live counts) |
+| `assets` | The API lists the tokens and chains a customer can pay with (the script prints the live counts: 150 assets on 13 chains on 2026-11-13) |
 | `x402` | The x402 facilitator is live for `near:mainnet` |
 | `sentinel-keys` | The independent checker publishes the keys it signs deposit instructions with |
 | `npm-*` | The eight `@nearpay-money/*` packages are on npm |
@@ -296,17 +296,107 @@ Known limits:
 
 ## Repositories
 
-`repos.json` is the machine-readable list. All are under <https://github.com/nearpay-money>. Design documents, decision records and per-service specifications are in `nearpay-brain`.
+NearPay is 26 repositories: this one and the 25 below, all under <https://github.com/nearpay-money>. `repos.json` is the machine-readable list. Each repository has its own README with a "Verify this repo" section.
 
-| Group | Repositories |
-|---|---|
-| Design | `nearpay-brain` |
-| Contracts and shared code | `nearpay-spec` (every API, event and error, as schemas), `nearpay-kit` (shared libraries) |
-| Services | `nearpay-identity`, `nearpay-payments`, `nearpay-billing`, `nearpay-rails`, `nearpay-agentpay`, `nearpay-compliance`, `nearpay-webhooks`, `nearpay-notify`, `nearpay-sandbox`, `nearpay-sentinel` |
-| Web apps | `nearpay-checkout`, `nearpay-js`, `nearpay-dashboard`, `nearpay-console`, `nearpay-site` |
-| SDKs and tools | `nearpay-node`, `nearpay-agentkit`, `nearpay-cli` |
-| On-chain | `nearpay-contracts` |
-| Platform | `nearpay-deploy`, `nearpay-infra`, `nearpay-testbed` |
+How the repositories fit together (the diagram in [How it works](#how-it-works) shows the same system while it runs):
+
+```mermaid
+flowchart TB
+  BRAIN["nearpay-brain<br/>design documents and decisions"]
+
+  subgraph shared["Contracts and shared code"]
+    direction LR
+    SPEC ~~~ KIT
+    SPEC["nearpay-spec<br/>every API, event and error,<br/>written once as schemas"]
+    KIT["nearpay-kit<br/>shared libraries<br/>and the UI design system"]
+  end
+
+  subgraph apps["Web apps"]
+    direction LR
+    CO ~~~ DASH ~~~ CON ~~~ SITE ~~~ JS
+    CO["nearpay-checkout<br/>what the customer sees"]
+    DASH["nearpay-dashboard<br/>merchant dashboard"]
+    CON["nearpay-console<br/>operations console"]
+    SITE["nearpay-site<br/>website and docs"]
+    JS["nearpay-js<br/>embedded checkout"]
+  end
+
+  subgraph sdks["SDKs and tools on npm"]
+    direction LR
+    NODE ~~~ AK ~~~ CLI
+    NODE["nearpay-node<br/>server SDK"]
+    AK["nearpay-agentkit<br/>x402, agent signer, MCP"]
+    CLI["nearpay-cli<br/>developer CLI"]
+  end
+
+  subgraph core["Services on the payment path"]
+    direction LR
+    PAY ~~~ RAILS ~~~ SEN ~~~ BILL ~~~ AP
+    PAY["nearpay-payments<br/>sessions, intents,<br/>refunds, links"]
+    RAILS["nearpay-rails<br/>quotes, chain tracking,<br/>settlement evidence"]
+    SEN["nearpay-sentinel<br/>independent checker"]
+    BILL["nearpay-billing<br/>invoices, subscriptions"]
+    AP["nearpay-agentpay<br/>x402 facilitator, relayer"]
+  end
+
+  subgraph support["Supporting services"]
+    direction LR
+    ID ~~~ COMP ~~~ WH ~~~ NOT ~~~ SB
+    ID["nearpay-identity<br/>accounts, keys,<br/>payout wallets"]
+    COMP["nearpay-compliance<br/>screening"]
+    WH["nearpay-webhooks<br/>events, signed delivery"]
+    NOT["nearpay-notify<br/>email"]
+    SB["nearpay-sandbox<br/>test-mode simulator"]
+  end
+
+  subgraph platform["Platform: builds, runs and tests everything above"]
+    direction LR
+    DEP ~~~ TB ~~~ INF
+    DEP["nearpay-deploy<br/>Compose stack, scripts,<br/>package registry"]
+    TB["nearpay-testbed<br/>end-to-end tests, demos"]
+    INF["nearpay-infra<br/>planned, scaffold only"]
+  end
+
+  CT["nearpay-contracts<br/>NEAR vault contract (Rust)"]
+
+  BRAIN -. "specifies" .-> shared
+  shared -- "types, libraries, UI" --> apps
+  apps ~~~ sdks
+  shared -- "types" --> sdks
+  apps -- "public API" --> core
+  sdks -- "public API" --> core
+  core -- "internal APIs and events" --> support
+  support ~~~ platform
+  core -- "billing's keeper collects" ---> CT
+```
+
+| Group | Repository | What it is |
+|---|---|---|
+| Design | [`nearpay-brain`](https://github.com/nearpay-money/nearpay-brain) | Design documents: requirements, architecture, decision records, a specification per service, audits. No code |
+| Contracts and shared code | [`nearpay-spec`](https://github.com/nearpay-money/nearpay-spec) | Every API, event, webhook payload and error, written once as schemas. It generates the OpenAPI document and the types every other repository uses. npm: `@nearpay-money/spec` |
+|  | [`nearpay-kit`](https://github.com/nearpay-money/nearpay-kit) | Shared libraries for the services and apps: integer money, ids, database and message-bus helpers, NEAR Intents signing and verification, address validation, the UI design system |
+| Services | [`nearpay-identity`](https://github.com/nearpay-money/nearpay-identity) | Accounts, sign-in (passkeys, Google), API keys, payout wallets with proof of ownership, and the permission check for every API request |
+|  | [`nearpay-payments`](https://github.com/nearpay-money/nearpay-payments) | The payment lifecycle: checkout sessions, payment intents, refunds, payment links, customers, reconciliation |
+|  | [`nearpay-billing`](https://github.com/nearpay-money/nearpay-billing) | Products, prices, invoices, subscriptions, payment reminders, and the keeper that collects auto-debit mandates |
+|  | [`nearpay-rails`](https://github.com/nearpay-money/nearpay-rails) | Moves the value: gets quotes from NEAR Intents (1Click), tracks deposits on each chain, verifies settlement on-chain and keeps the evidence |
+|  | [`nearpay-agentpay`](https://github.com/nearpay-money/nearpay-agentpay) | Agent payments: the x402 facilitator, and the relayer that submits agent-signed NEAR Intents transfers |
+|  | [`nearpay-sentinel`](https://github.com/nearpay-money/nearpay-sentinel) | The independent checker: co-signs every deposit address before the customer sees it, re-checks settled payments against the chain, and can stop payments |
+|  | [`nearpay-compliance`](https://github.com/nearpay-money/nearpay-compliance) | Sanctions screening of addresses, business details, country rules |
+|  | [`nearpay-webhooks`](https://github.com/nearpay-money/nearpay-webhooks) | The event log and signed webhook delivery with retries |
+|  | [`nearpay-notify`](https://github.com/nearpay-money/nearpay-notify) | Emails: sign-in links, receipts, invoices, security alerts |
+|  | [`nearpay-sandbox`](https://github.com/nearpay-money/nearpay-sandbox) | Simulator of NEAR Intents, the paying chains and the vault. Test mode runs on it, because NEAR Intents has no testnet |
+| Web apps | [`nearpay-checkout`](https://github.com/nearpay-money/nearpay-checkout) | What the customer sees: hosted checkout, payment links, hosted invoices, embedded checkout. Live at `pay.nearpay.money` |
+|  | [`nearpay-dashboard`](https://github.com/nearpay-money/nearpay-dashboard) | The merchant dashboard. Live at `dashboard.nearpay.money` |
+|  | [`nearpay-console`](https://github.com/nearpay-money/nearpay-console) | The operations console for NearPay staff: merchants, screening, payment explorer, kill switch, audit log |
+|  | [`nearpay-site`](https://github.com/nearpay-money/nearpay-site) | The marketing site and the developer docs. Live at `nearpay.money` and `docs.nearpay.money` |
+|  | [`nearpay-js`](https://github.com/nearpay-money/nearpay-js) | Browser SDKs for embedded checkout: `@nearpay-money/js`, `@nearpay-money/react` and the loader at `js.nearpay.money` |
+| SDKs and tools | [`nearpay-node`](https://github.com/nearpay-money/nearpay-node) | Server SDK for Node and TypeScript: `@nearpay-money/node` |
+|  | [`nearpay-agentkit`](https://github.com/nearpay-money/nearpay-agentkit) | Agent toolkit: `@nearpay-money/x402` (paywall middleware and agent client), `@nearpay-money/agent-signer`, `@nearpay-money/mcp` (MCP server) |
+|  | [`nearpay-cli`](https://github.com/nearpay-money/nearpay-cli) | Developer CLI, `@nearpay-money/cli`: log in, forward webhooks to localhost, trigger test events |
+| On-chain | [`nearpay-contracts`](https://github.com/nearpay-money/nearpay-contracts) | NEAR smart contract in Rust: the subscription vault for auto-debit. Built and tested, not deployed on mainnet |
+| Platform | [`nearpay-deploy`](https://github.com/nearpay-money/nearpay-deploy) | How it runs: the Docker Compose stack, the scripts for the local stack and the live beta, monitoring, the local package registry |
+|  | [`nearpay-testbed`](https://github.com/nearpay-money/nearpay-testbed) | End-to-end tests of the whole system, the demo merchant app and the demo scripts used in Path E |
+|  | [`nearpay-infra`](https://github.com/nearpay-money/nearpay-infra) | Planned server infrastructure as code. A scaffold only: no code yet |
 
 Public npm packages: `@nearpay-money/spec`, `/node`, `/js`, `/react`, `/cli`, `/x402`, `/agent-signer`, `/mcp`.
 
